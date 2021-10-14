@@ -29,8 +29,6 @@ def cat_to_cont(df):
     return df3
 
 
-
-
 if __name__ == "__main__":
     loan_dataframe()
     print(loan_dataframe(loan_df))
