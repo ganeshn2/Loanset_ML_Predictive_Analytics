@@ -77,9 +77,10 @@ def cat_to_cont(df):
 # y = loan_df5['loan_status']
 
 if __name__ == "__main__":
-    loan_dataframe()
-    print(loan_dataframe().head())
-    cat_to_cont(df)
+    loan_df = loan_dataframe()
+    # print(loan_dataframe().head())
+    cat_to_cont = cat_to_cont(loan_df)
+    print(cat_to_cont)
     # facet_grid(loan_df,Gender,loan_status,Set1,4,1.5,True,Principal)
     # facet_grid(loan_df,Gender,loan_status,Set1,4,1.5,True,age)
     # facet_grid(loan_df, Gender, loan_status, Set3, 4, 1.5, True,Dayofweek)
