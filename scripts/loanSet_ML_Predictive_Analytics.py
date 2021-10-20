@@ -8,79 +8,55 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report,confusion_matrix,jaccard_score,\
-    accuracy_score,f1_score,precision_score,recall_score
+from sklearn.metrics import classification_report,confusion_matrix,jaccard_score,accuracy_score,f1_score,precision_score,recall_score
 
 
 def loan_dataframe():
-    loan_df = pd.read_csv('./input/Loanset.csv', index_col=[0])
-    loan_df = loan_df.drop(columns=['Unnamed: 0.1', 'Unnamed: 0.1.1'], axis=1)
-    loan_df['effective_date'] = pd.to_datetime(loan_df['effective_date'])
-    loan_df['due_date'] = pd.to_datetime(loan_df['due_date'])
-    loan_df['Dayofweek'] = loan_df['due_date'].dt.dayofweek
-    loan_df = loan_df.drop(['effective_date', 'due_date'], axis=1)
-    loan_df['weekend'] = loan_df['Dayofweek'].apply(lambda x: 1 if (x > 4) else 0)
-    return loan_df
+    loan_df1 = pd.read_csv('./input/Loanset.csv', index_col=[0])
+    loan_df1 = loan_df1.drop(columns=['Unnamed: 0.1', 'Unnamed: 0.1.1'], axis=1)
+    loan_df1['effective_date'] = pd.to_datetime(loan_df1['effective_date'])
+    loan_df1['due_date'] = pd.to_datetime(loan_df1['due_date'])
+    loan_df1['Dayofweek'] = loan_df1['due_date'].dt.dayofweek
+    loan_df1 = loan_df1.drop(['effective_date', 'due_date'], axis=1)
+    loan_df1['weekend'] = loan_df1['Dayofweek'].apply(lambda x: 1 if (x > 4) else 0)
+    loan_df1["education"] = loan_df1["education"].replace({"Bechalor": "Bachelor"})
+    return loan_df1
 
 
 def cat_to_cont(df):
-    df1 = pd.get_dummies(loan_df['education'], drop_first=False)
-    df2 = pd.get_dummies(loan_df['Gender'],drop_first=True)
-    df3 = pd.concat([df1, df2], axis=1)
-    return df3
+    loan_df2 = pd.get_dummies(loan_df1['education'], drop_first=False)
+    loan_df3 = pd.get_dummies(loan_df1['Gender'],drop_first=False)
+    loan_df4 = pd.concat([loan_df2, loan_df3], axis=1)
+    return loan_df4
 
-#
-# def facet_grid(data,col,hue,palette,height, aspect,margin_titles,X,title):
-#     plt.Figure(figsize=(12, 6), dpi=1000)
-#     a = sns.FacetGrid(data, col, hue, palette, height, aspect,
-#                       margin_titles)
-#     a.map(plt.hist, 'X')
-#     plt.legend()
-#     plt.tight_layout()
-#     plt.savefig(title + ".jpg")
-#     plt.show()
-#
-#
-# def joint_plot(y,x,data,kind,title):
-#     # a = sns.jointplot(y='age', x='Principal', data=loan_df, kind='scatter')
-#     a = sns.jointplot(y, x, data, kind=kind)
-#     plt.tight_layout()
-#     plt.savefig(title + ".jpg")
-#     plt.show()
-#
-#
-# def pair_plot(df, hue, palette,title):
-#     # grid = sns.pairplot(loan_df, hue='terms', palette='Set3')
-#     grid = sns.pairplot(df, hue=hue, palette=palette)
-#     grid = grid.map_upper(plt.scatter, color='darkred')
-#     grid = grid.map_diag(plt.hist, bins=10, color='blue',
-#                          edgecolor='k')
-#     grid = grid.map_lower(sns.kdeplot, cmap='Reds')
-#     plt.tight_layout()
-#     plt.savefig(title + ".jpg")
-#     plt.show()  # reference: https://towardsdatascience.com/visualizing-data-with-pair-plots-in-python-f228cf529166
-#
-#
-# def kde_plot(x,y,cmap,a,b,c,d):
-#     # kde = sns.kdeplot(loan_df5['terms'], loan_df5['age'],
-#                 #cmap="plasma", shade=True, shade_lowest=False)
-#     kde = sns.kdeplot(x,y,cmap = cmap, shade = True, shade_lowest = False)
-#     plt.xlabel(x, fontsize=15)
-#     plt.ylabel(y, fontsize=15)
-#     plt.xticks(fontsize=12)
-#     plt.yticks(fontsize=12)
-#     plt.xlim(a,b)
-#     plt.ylim(c,d)
-#
-#
-# X = loan_df5.drop(['loan_status'], axis =1)
-# y = loan_df5['loan_status']
+
+def clean_df(df1, df2):
+    loan_df = pd.concat([loan_df1, loan_df4], axis=1)
+    loan_df = loan_df.drop(['education', 'Gender'], axis=1)
+    return loan_df
+
+
+# def ml_models(title):
+#     logmodel = LogisticRegression()
+#     logmodel.fit(X_train, y_train)
+#     predictions_log = logmodel.predict(X_test)
+#     ps_title= precision_score(y_test,predictions_log,average='weighted').round(2)
+#     rs_title=recall_score(y_test,predictions_log,average='weighted').round(2)
+#     js_title=jaccard_score(y_test,predictions_log,average='weighted').round(2)
+#     f1s_title=f1_score(y_test,predictions_log,average='weighted').round(2)
+#     cr_title = classification_report(y_test, predictions_log)
+#     cm_title = confusion_matrix(y_test,predictions_log)
+#     print("Classification Report Using Log Model for the Dataset is:",'\n\n', cr_log)
+#     print("Confusion Matrix Using Log Model for the Dataset is:",'\n\n',cm_log)
+#     return ps_title,rs_log,js_log,f1s_log
+
 
 if __name__ == "__main__":
-    loan_df = loan_dataframe()
-    # print(loan_dataframe().head())
-    cat_to_cont = cat_to_cont(loan_df)
-    print(cat_to_cont)
-    # facet_grid(loan_df,Gender,loan_status,Set1,4,1.5,True,Principal)
-    # facet_grid(loan_df,Gender,loan_status,Set1,4,1.5,True,age)
-    # facet_grid(loan_df, Gender, loan_status, Set3, 4, 1.5, True,Dayofweek)
+    loan_df1 = loan_dataframe()
+    loan_df4 = cat_to_cont(loan_df1)
+    loan_df = clean_df(loan_df1,loan_df4)
+    X = loan_df.drop(['loan_status'], axis=1)
+    y = loan_df['loan_status']
+    X = StandardScaler().fit(X).transform(X)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=101)
+    print("success")
