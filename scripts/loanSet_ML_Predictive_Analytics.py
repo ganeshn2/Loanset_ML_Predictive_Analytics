@@ -7,6 +7,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report,confusion_matrix,jaccard_score,accuracy_score,f1_score,precision_score,recall_score
 
@@ -36,19 +37,35 @@ def clean_df(df1, df2):
     return loan_df
 
 
-def ml_models(title):
-    title+'_model' = LogisticRegression()
-    title_model.fit(X_train, y_train)
-    predictions_title = title_model.predict(X_test)
-    ps_title= precision_score(y_test,predictions_title,average='weighted').round(2)
-    rs_title=recall_score(y_test,predictions_title,average='weighted').round(2)
-    js_title=jaccard_score(y_test,predictions_title,average='weighted').round(2)
-    f1s_title=f1_score(y_test,predictions_title,average='weighted').round(2)
-    cr_title = classification_report(y_test, predictions_title)
-    cm_title = confusion_matrix(y_test,predictions_title)
-    print("Classification Report Using Log Model for the Dataset is:",'\n\n', cr_log)
-    print("Confusion Matrix Using Log Model for the Dataset is:",'\n\n',cm_log)
-    return ps_title,rs_title,js_title,f1s_title
+def ml_model(ml_alg_type):
+    if ml_alg_type == "LogisticRegression":
+        regression = LogisticRegression()
+    elif ml_alg_type == "KNeighborsClassifier":
+        regression = KNeighborsClassifier(n_neighbors=1)
+    elif ml_alg_type == "DecisionTreeClassifier":
+        regression = DecisionTreeClassifier()
+    elif ml_alg_type == "RandomForestClassifier":
+        regression = RandomForestClassifier(criterion='gini',n_estimators=10,verbose=3)
+    elif ml_alg_type == "SVC":
+        regression = SVC(kernel='rbf',degree=3)
+    elif ml_alg_type == "GaussianNB":
+        regression = GaussianNB(priors=None, var_smoothing=1e-09)
+    regression.fit(X_train, y_train)
+    predictions_title = regression.predict(X_test)
+    ps_title = precision_score(y_test, predictions_title, average='weighted').round(2)
+    rs_title = recall_score(y_test, predictions_title, average='weighted').round(2)
+    js_title = jaccard_score(y_test, predictions_title, average='weighted').round(2)
+    f1s_title = f1_score(y_test, predictions_title, average='weighted').round(2)
+    cr = classification_report(y_test, predictions_title)
+    cm = confusion_matrix(y_test, predictions_title)
+    # print("Classification Report Using Log Model for the Dataset is:", '\n\n', cr)
+    # print("Confusion Matrix Using Log Model for the Dataset is:",'\n\n',cm)
+    return {
+        "precision_score":ps_title,
+        "recall_score": rs_title,
+        "jaccuard_score":js_title,
+        "f1_score":f1s_title
+        }
 
 
 if __name__ == "__main__":
@@ -59,4 +76,10 @@ if __name__ == "__main__":
     y = loan_df['loan_status']
     X = StandardScaler().fit(X).transform(X)
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=101)
-    print("success")
+    alg_list = ['LogisticRegression','KNeighborsClassifier','DecisionTreeClassifier','RandomForestClassifier','SVC','GaussianNB']
+    result_dict = dict()
+    for alg in alg_list:
+        result = ml_model(alg)
+        result_dict[alg] = result
+    scores_df = pd.DataFrame(result_dict).T
+    print(scores_df)
