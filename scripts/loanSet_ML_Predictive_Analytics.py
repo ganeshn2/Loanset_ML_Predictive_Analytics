@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -80,6 +80,16 @@ def ml_model(ml_alg_type):
         }
 
 
+def bar_plot(df):
+    df1 = df.plot(kind='bar',figsize=(20, 8),color=['#5cb85c', '#5bc0de', '#d9534f'],linewidth=1, fontsize=14)
+    df1.set_title('Comparison of Metric Scores by Supervised ML Algorithms',fontsize=20)
+    df1.set_facecolor('white')
+    df1.legend(fontsize=14, facecolor='white', loc='best')
+    df1.get_yaxis().set_visible(True)
+    df1.set_ylabel('Metric Scores', fontsize=18)
+    df1.set_xlabel('Algorithm', fontsize=18)
+    df1.savefig('Metric Scores Obtained From Various ML Algorithms of Loan Datasets .jpeg')
+
 if __name__ == "__main__":
     loan_df1 = loan_dataframe()
     loan_df4 = cat_to_cont(loan_df1)
@@ -96,4 +106,4 @@ if __name__ == "__main__":
         result_dict[alg] = result
     scores_df = pd.DataFrame(result_dict).T
     print(scores_df)
-    #print(error_rate())
+    bar_plot(loan_df)
