@@ -36,19 +36,19 @@ def clean_df(df1, df2):
     return loan_df
 
 
-# def ml_models(title):
-#     logmodel = LogisticRegression()
-#     logmodel.fit(X_train, y_train)
-#     predictions_log = logmodel.predict(X_test)
-#     ps_title= precision_score(y_test,predictions_log,average='weighted').round(2)
-#     rs_title=recall_score(y_test,predictions_log,average='weighted').round(2)
-#     js_title=jaccard_score(y_test,predictions_log,average='weighted').round(2)
-#     f1s_title=f1_score(y_test,predictions_log,average='weighted').round(2)
-#     cr_title = classification_report(y_test, predictions_log)
-#     cm_title = confusion_matrix(y_test,predictions_log)
-#     print("Classification Report Using Log Model for the Dataset is:",'\n\n', cr_log)
-#     print("Confusion Matrix Using Log Model for the Dataset is:",'\n\n',cm_log)
-#     return ps_title,rs_log,js_log,f1s_log
+def ml_models(title):
+    title+'_model' = LogisticRegression()
+    title_model.fit(X_train, y_train)
+    predictions_title = title_model.predict(X_test)
+    ps_title= precision_score(y_test,predictions_title,average='weighted').round(2)
+    rs_title=recall_score(y_test,predictions_title,average='weighted').round(2)
+    js_title=jaccard_score(y_test,predictions_title,average='weighted').round(2)
+    f1s_title=f1_score(y_test,predictions_title,average='weighted').round(2)
+    cr_title = classification_report(y_test, predictions_title)
+    cm_title = confusion_matrix(y_test,predictions_title)
+    print("Classification Report Using Log Model for the Dataset is:",'\n\n', cr_log)
+    print("Confusion Matrix Using Log Model for the Dataset is:",'\n\n',cm_log)
+    return ps_title,rs_title,js_title,f1s_title
 
 
 if __name__ == "__main__":
