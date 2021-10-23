@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib as plt
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
@@ -36,12 +37,23 @@ def clean_df(df1, df2):
     loan_df = loan_df.drop(['education', 'Gender'], axis=1)
     return loan_df
 
+def error_rate():
+    error_rate = []
+    for i in range(1, 40):
+        knn = KNeighborsClassifier(n_neighbors=i)
+        knn.fit(X_train, y_train)
+        prediction_i = knn.predict(X_train)
+        error_rate.append(np.mean(prediction_i != y_train))
+    min_val = min(error_rate)
+    min_index = error_rate.index(min_val)
+    return min_index+1
+
 
 def ml_model(ml_alg_type):
     if ml_alg_type == "LogisticRegression":
         regression = LogisticRegression()
     elif ml_alg_type == "KNeighborsClassifier":
-        regression = KNeighborsClassifier(n_neighbors=1)
+        regression = KNeighborsClassifier(error_rate())
     elif ml_alg_type == "DecisionTreeClassifier":
         regression = DecisionTreeClassifier()
     elif ml_alg_type == "RandomForestClassifier":
@@ -76,10 +88,12 @@ if __name__ == "__main__":
     y = loan_df['loan_status']
     X = StandardScaler().fit(X).transform(X)
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=101)
-    alg_list = ['LogisticRegression','KNeighborsClassifier','DecisionTreeClassifier','RandomForestClassifier','SVC','GaussianNB']
+    alg_list = ['LogisticRegression','KNeighborsClassifier',
+                'DecisionTreeClassifier','RandomForestClassifier','SVC','GaussianNB']
     result_dict = dict()
     for alg in alg_list:
         result = ml_model(alg)
         result_dict[alg] = result
     scores_df = pd.DataFrame(result_dict).T
     print(scores_df)
+    #print(error_rate())
